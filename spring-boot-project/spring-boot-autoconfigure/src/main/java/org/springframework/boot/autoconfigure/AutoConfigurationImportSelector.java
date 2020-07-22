@@ -88,6 +88,8 @@ public class AutoConfigurationImportSelector implements DeferredImportSelector, 
 
 	private ResourceLoader resourceLoader;
 
+	//LB-TODO 自动装备的入口
+	// 该方法在Spring解析元信息的时候会被调用
 	@Override
 	public String[] selectImports(AnnotationMetadata annotationMetadata) {
 		if (!isEnabled(annotationMetadata)) {
@@ -95,8 +97,10 @@ public class AutoConfigurationImportSelector implements DeferredImportSelector, 
 		}
 		AutoConfigurationMetadata autoConfigurationMetadata = AutoConfigurationMetadataLoader
 				.loadMetadata(this.beanClassLoader);
+		// 获取自装配的实体
 		AutoConfigurationEntry autoConfigurationEntry = getAutoConfigurationEntry(autoConfigurationMetadata,
 				annotationMetadata);
+		// 通过该方法扫描的类  @Configuration    最终会以beandefinition方式注册到上下文中
 		return StringUtils.toStringArray(autoConfigurationEntry.getConfigurations());
 	}
 
@@ -113,8 +117,11 @@ public class AutoConfigurationImportSelector implements DeferredImportSelector, 
 			return EMPTY_ENTRY;
 		}
 		AnnotationAttributes attributes = getAttributes(annotationMetadata);
+		// 返回自动装配的bean的名称
 		List<String> configurations = getCandidateConfigurations(annotationMetadata, attributes);
+		// 去除重复的值----list->linkedhashset->list
 		configurations = removeDuplicates(configurations);
+		// 获取配置的  排除加载的bean名称
 		Set<String> exclusions = getExclusions(annotationMetadata, attributes);
 		checkExcludedClasses(configurations, exclusions);
 		configurations.removeAll(exclusions);

@@ -274,7 +274,7 @@ public class SpringApplication {
 		this.primarySources = new LinkedHashSet<>(Arrays.asList(primarySources));
 		// 通过依赖的jar 推断当前web环境的类型
 		this.webApplicationType = WebApplicationType.deduceFromClasspath();
-		//设置一些初始化器，缓存到initializers 用于在pring上下文刷新之前的准备工作，比如配置文件的激活等
+		//设置一些初始化器，缓存到initializers 用于在spring上下文刷新之前的准备工作，比如配置文件的激活等
 		setInitializers((Collection) getSpringFactoriesInstances(ApplicationContextInitializer.class));
 		//设置一些监听器，缓存到listeners，用于Spring的事件监听
 		setListeners((Collection) getSpringFactoriesInstances(ApplicationListener.class));

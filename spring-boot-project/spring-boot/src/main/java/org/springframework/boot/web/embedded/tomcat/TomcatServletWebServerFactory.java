@@ -183,11 +183,13 @@ public class TomcatServletWebServerFactory extends AbstractServletWebServerFacto
 		customizeConnector(connector);
 		tomcat.setConnector(connector);
 		tomcat.getHost().setAutoDeploy(false);
+		//Engine
 		configureEngine(tomcat.getEngine());
 		for (Connector additionalConnector : this.additionalTomcatConnectors) {
 			tomcat.getService().addConnector(additionalConnector);
 		}
 		prepareContext(tomcat.getHost(), initializers);
+		// 返回TomcatWebServer 并tomcat.start()
 		return getTomcatWebServer(tomcat);
 	}
 

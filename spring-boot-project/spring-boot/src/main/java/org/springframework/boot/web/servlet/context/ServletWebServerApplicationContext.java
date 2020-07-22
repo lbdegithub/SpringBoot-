@@ -148,8 +148,11 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 
 	@Override
 	protected void onRefresh() {
+		// Spring上下文初始化时的回调 see AbstractApplicationContext.refresh#onRefresh
+		// 当前类继承类GenericWebApplicationContext 最终回调的时候回走这里
 		super.onRefresh();
 		try {
+			// 创建web服务
 			createWebServer();
 		}
 		catch (Throwable ex) {
@@ -159,7 +162,9 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 
 	@Override
 	protected void finishRefresh() {
+		// Spring上下文加载完成的最后一步
 		super.finishRefresh();
+		// 启动 如tomcatwebserver
 		WebServer webServer = startWebServer();
 		if (webServer != null) {
 			publishEvent(new ServletWebServerInitializedEvent(webServer, this));
@@ -176,6 +181,7 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 		WebServer webServer = this.webServer;
 		ServletContext servletContext = getServletContext();
 		if (webServer == null && servletContext == null) {
+			// 通过ioc获取ServletWebServerFactory的bean
 			ServletWebServerFactory factory = getWebServerFactory();
 			this.webServer = factory.getWebServer(getSelfInitializer());
 		}
@@ -222,7 +228,9 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 
 	private void selfInitialize(ServletContext servletContext) throws ServletException {
 		prepareWebApplicationContext(servletContext);
+		// 注册scope ---application
 		registerApplicationScope(servletContext);
+		// 注册响应的环境bean servletContext，servletConfig，contextParameters，contextAttributes
 		WebApplicationContextUtils.registerEnvironmentBeans(getBeanFactory(), servletContext);
 		for (ServletContextInitializer beans : getServletContextInitializerBeans()) {
 			beans.onStartup(servletContext);
